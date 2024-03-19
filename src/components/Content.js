@@ -16,7 +16,7 @@ const Content = () => {
     <main className='content'>
       <header className='header'>
         <Search />
-        {selectedBrands.length && <Download /> }
+        {selectedBrands.length !==0  && <Download /> }
       </header>
       <section className='brands'>
         {brands.map(brand => (
