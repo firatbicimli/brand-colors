@@ -1,19 +1,75 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import MainContext from '../MainContext'
 import { GrLink, GrDownload, GrClose } from 'react-icons/gr'
 
 const Download = () => {
 
-    const {selectedBrands, setSelectedBrands} = useContext(MainContext)
+    const {selectedBrands, brands, setSelectedBrands} = useContext(MainContext)
+    const [downloadUrl, setDownloadUrl] = useState()
+    const [cssMethod, setCssMethod] = useState('css')
+
+    useEffect(() => {
+        if (selectedBrands.length > 0) {
+
+            let output = ''
+            switch (cssMethod) {
+
+                case 'css':
+                    output += ':root {\n'
+                    selectedBrands.map(slug => {
+                        let brand = brands.find(brand => brand.slug === slug)
+                        brand.colors.map((color, key) => {
+                            output += `--${slug}-${key}: #${color};\n`
+                        })
+                    })
+                    output += '}'
+                    break;
+
+                    case 'scss':
+                        selectedBrands.map(slug => {
+                            let brand = brands.find(brand => brand.slug === slug)
+                            brand.colors.map((color, key) => {
+                                output += `\$${slug}-${key}: #${color};\n`
+                            })
+                        })
+
+                    break;
+
+                    case 'less':
+                        selectedBrands.map(slug => {
+                            let brand = brands.find(brand => brand.slug === slug)
+                            brand.colors.map((color, key) => {
+                                output += `@${slug}-${key}: #${color};\n`
+                            })
+                        })
+
+                    break;
+
+
+            }
+            const blob = new Blob([output])
+            const url = (URL.createObjectURL(blob))
+            setDownloadUrl(url)
+            return () => {
+                URL.revokeObjectURL(url)
+                setDownloadUrl('')
+            }
+        }
+    }, [selectedBrands, cssMethod])
 
     const getLink = () => {
-        prompt('Here is the URL share', 'http://localhost:3004/collection')
+        prompt('Here is the URL share', `http://localhost:3004/collection/${selectedBrands.join(',')}`)
     }
 
   return (
     <div className='download'>
         <div className='actions'>
-            <a href=''>
+        <select onChange={(e => setCssMethod(e.target.value))}>
+              <option value="css">CSS</option>
+              <option value="scss">SCSS</option>
+              <option value="less">LESS</option>
+            </select>
+            <a download={`brands.${cssMethod}`} href={downloadUrl}>
                 <GrDownload />
             </a>
             <button onClick={getLink}>

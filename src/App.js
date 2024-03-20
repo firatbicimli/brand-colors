@@ -5,6 +5,12 @@ import Sidebar from './components/Sidebar';
 import BrandsData from './brands.json'
 import { useEffect, useState } from 'react';
 import Copied from './components/Copied';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route
+} from "react-router-dom";
+import Collection from './components/Collection';
 
 function App() {
 
@@ -50,7 +56,12 @@ function App() {
       <MainContext.Provider value={data}>
       {copied && <Copied color={copied} />}
       <Sidebar />
-      <Content />
+      <Router>
+  <Routes>
+    <Route path="/" element={<Content />} />
+    <Route path="/collection/:slugs" element={<Collection />} />
+  </Routes>
+</Router>
       </MainContext.Provider>
     </>
   );
