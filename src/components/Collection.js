@@ -5,6 +5,7 @@ import LazyLoad from 'react-lazy-load'
 import Brand from './Brand'
 import Download from './Download'
 import MainContext from '../MainContext'
+// Collection 
 
 const Collection = () => {
     const {slugs} = useParams()
